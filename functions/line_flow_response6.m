@@ -8,7 +8,7 @@
 % Date: Jun. 23th, 2020
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function flow_resp = line_flow_response(ang_data,flow_data,input_loc,n_gen,n_line,dt)
+function flow_resp = line_flow_response6(ang_data,flow_data,input_loc,n_gen,n_line,dt)
 
 n = size(ang_data,1);
 

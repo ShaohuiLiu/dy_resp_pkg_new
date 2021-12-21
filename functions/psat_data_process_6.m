@@ -21,7 +21,7 @@ for i = 1 : 3
     y_psat(:,i) = Varout.vars(tp_s:tp_e,6*(i-1)+2)-1;
     % rotor angle
     delta0(i) = Varout.vars(2,2*(i-1)+1);
-    y_psat(:,i+3) = Varout.vars(tp_s:tp_e,6*(i-1)+1)-Varout.vars(2,6*(i-1)+1);
+    y_psat(:,i+3) = Varout.vars(tp_s:tp_e,6*(i-1)+1)-Varout.vars(2,6*(i-1)+1); % remove initial
 end
 % frequency
 freq_impz = y_psat(:,1:3);

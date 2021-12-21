@@ -17,27 +17,53 @@
 % Author: Shaohui Liu
 % Contact: shaohui.liu@utexas.edu
 % Date: Jun. 23th, 2020
+% Last modified: 11/15/2021
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Initialize parameters and load data
+clear all;clc
 
 % load ambient data file
 % load data/TD_2nd_unif_data_power_new.mat
-% load data/psat_td_data_2nd_unif.mat
-load data/psat_td_data_2nd_unif_0726.mat
-% load data/psat_td_data_2nd_unif_load.mat
+% load data/pkg_td/psat_td_data_2nd_unif.mat
+% load data/psat_td_data_2nd_unif_0726.mat % orinigal
+% load data/psat_td_data_2nd_unif_load.mat % 11/15
+% load ../test_cases_1115/td_2nd_unif_load_1116.mat % pert on original 3 loads
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_1117.mat % pert on 3 new loads near generator
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_scaled1_1117.mat % (not good) pert on 3 new loads near generator, Var seacled by [2,1,3]
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_1121.mat % pert on 3 new loads near generato, reduce q
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long_1121.mat % pert on 3 new loads near generator, reduce q, longer to reduce correlation
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long1_1121.mat % pert on 3 new loads near generator, reduce q, longer to reduce correlation
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long2_1122.mat % pert on 3 new loads near generator, fix voltage and negative load
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation_1125.mat % pert on 3 new loads near generator, participation factor (inverse)
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation3_1125.mat % pert on 3 new loads near generator, participation factor 1:1:1
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation4_1127.mat % pert on 3 new loads near generator, participation factor 1:0:10
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation5_1127.mat % pert on 3 new loads near generator, participation factor 0:0:11
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation6_1127.mat %
+% pert on 3 new loads near generator, participation factor 1;12;5 peak
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation7_1127.mat % 
+% pert on 3 new loads near generator, participation factor 1;9;4, immediate response
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_scaled_1121.mat % 2:1:3
+% load ../test_cases_1115/td_2nd_unif_load_on_gen_scaled_1117.mat % (freq not good, angle good) pert on 3 new loads near generator, Var seacled by damping
+load ../test_cases_1115/td_2nd_unif_load_on_gen_participation20_1218_genload.mat
+% load data/pkg_td/psat_td_data_2nd_unif_load.mat
 % load data/psat_td_data_2nd_unif_load1.mat
 addpath('functions');
-% load data/psat_td_data_2nd_nonunif.mat
+% load data/pkg_td/psat_td_data_2nd_nonunif.mat
 t_ambient = Varout.t;
 x_ambient = Varout.vars(:,1:6);
 f_ambient = Varout.vars(:,46:54);
+
+% % 7-9 bus1-3 angle, 
+% x_ambient(:,1) = Varout.vars(:,7);
+% x_ambient(:,3) = Varout.vars(:,8);
+% x_ambient(:,5) = Varout.vars(:,9);
 
 n_gen = 3; % number of generators
 n_line = 9; % number of lines
 dt = .01; % discrete time step for data
 T = t_ambient; % 
-T_start = 20; % we use the data start from 20s
+T_start = 50; % we use the data start from 20s for stability
 
 [T1,freq_data,angle_data,flow_data] = data_process(x_ambient,f_ambient,T,T_start,dt);
 n1 = length(T);
@@ -54,29 +80,40 @@ freq_resp = frequency_response(freq_data,n_gen,dt);
 ang_resp = angle_response(angle_data,n_gen,dt);
 
 % line flow
-input_loc = 1;
+input_loc = 2;
 flow_resp = line_flow_response(angle_data,flow_data,input_loc,n_gen,n_line,dt);
 
-% inferred response of input at generator 1
-freq_resp1 = freq_resp{1};
-ang_resp1 = ang_resp{1};
+% inferred response of input at generator 2
+freq_resp1 = freq_resp{input_loc};
+ang_resp1 = ang_resp{input_loc};
 
 
 
 %% Load impulse response data
 % load data/impz_resp_2nd_nonunif_power.mat % impulse response w/ input@1st generator
 % load data/impz_resp_2nd_unif_power.mat
-load data/impz_resp_2nd_unif_power_0726.mat
+% load data/impz_resp_2nd_unif_power_0726.mat % input at gen1
+% load data/d_009_classicalGen_load_pert_file2.mat % input at gen2, mechanical power
+% load test_cases_1115/2nd_unif_pert_file_input2.mat % input at gen2, mechanical power
+load ../test_cases_1115/2nd_unif_pert_file_input2.mat % input at gen2, mechanical power
 % load data/impz_resp_2nd_unif_power2.mat
 psat_temp = Varout;
+
+load data/d_009_classicalGen_load_pert_fault2.mat % input at gen2, load impulse
+% load data/impz_resp_2nd_unif_power2.mat
+psat_temp_fault = Varout;
+
 % Time span for prediction
 t_range = 5;
 
 [freq_impz,angle_impz,flow_impz,t_psat] = psat_data_process(psat_temp,t_range,dt);
 
+[freq_impz_fault,angle_impz_fault,flow_impz_fault,t_psat_fault] = psat_data_process(psat_temp_fault,t_range,dt);
+
 % normalization
 for i = 1 : n_gen
     freq_impz(:,i) = freq_impz(:,i) ./ max(freq_impz(:,i));
+    freq_impz_fault(:,i) = freq_impz_fault(:,i) ./ max(freq_impz_fault(:,i));
 end
 
 
@@ -85,53 +122,80 @@ end
 %% Plot the results
 
 plot_switch = 1;
+save_switch = 0;
 
 T2 = 0 : dt : t_range;
 plot_idx = 1 : length(T2);
 if plot_switch == 1
-    
+%     
 % Frequency    
 fig1 = figure('DefaultAxesFontSize',18);
 freq_resp2 = freq_resp1;
 for i = 1 : 3
-    if i ~= 1
-        freq_resp2(:,i) = freq_resp2(:,i) - freq_resp2(1,i);
-    end
+%     if i ~= input_loc
+%         freq_resp2(:,i) = freq_resp2(:,i) - freq_resp2(1,i);
+%     end
+%     if i == 1
+%         freq_resp2(:,i) = freq_resp2(:,i) + 1e-6;
+%     end
     freq_resp2(:,i) = freq_resp2(:,i)./max(abs(freq_resp2(:,i)));
     subplot(1,3,i)
-    plot(t_psat,freq_impz(:,i),'-.',T2,freq_resp2(plot_idx,i),'-','LineWidth',2);
+    plot(t_psat,freq_impz(:,i),'-.',t_psat(2:end),freq_impz_fault(2:end,i),':',T2,freq_resp2(plot_idx,i),'-','LineWidth',2);
     xlabel('Time [s]');
     ylabel('scale');
     xlim([0 t_range]);
     title(strcat('\omega ',num2str(i)));
-    if i == 1
-        legend('model based','data driven','Location','best');
+    if i == 3
+        legend('model based(mech.)','model based(load)','data driven','Location','best');
     end
 %     title('Input: \omega_1')
     grid on
 end
-sgt = sgtitle('Frequency response: 2nd order, non-uniform damping, input1');
+% sgt = sgtitle('Frequency response: 2nd order, non-uniform damping, input1');
+sgt = sgtitle('Frequency response: 2nd order, uniform damping, input2');
 sgt.FontSize = 32;
 set(fig1,'Position',[10 10 1500 400])
+
+if save_switch == 1
+    filename = '2nd_unif_frequency';
+    savefig(fig1,filename,'compact');
+    saveas(fig1,filename,'epsc');
+    saveas(fig1,filename,'png');
+    movefile(strcat(filename,'.fig'),'plot')
+    movefile(strcat(filename,'.eps'),'plot')
+    movefile(strcat(filename,'.png'),'plot')
+end
 
 % Rotor angle
 fig2 = figure('DefaultAxesFontSize',18);
 for i = 1 : n_gen
     subplot(1,3,i)
-    plot(t_psat,angle_impz(:,i),'-.',T2,ang_resp1(plot_idx,i) ./ (-10),'-','LineWidth',2); %T1,freq_resp1(:,i),'-',
+    plot(t_psat,angle_impz(:,i)./max(abs(angle_impz(:,i))),'-.',...
+         t_psat(2:end),angle_impz_fault(2:end,i)./max(abs(angle_impz_fault(2:end,i))),':',...
+         T2,ang_resp1(plot_idx,i)./-max(abs(ang_resp1(plot_idx,i))),'-','LineWidth',2); %T1,freq_resp1(:,i),'-',
     xlabel('Time [s]');
     ylabel('scale');
     xlim([0 t_range]);
     title(strcat('\delta ',num2str(i)));
     if i == 1
-        legend('model based','data driven','Location','best');
+        legend('model based(mech.)','model based(load)','data driven','Location','best');
     end
 %     title('Input: \omega_1')
     grid on
 end
-sgt = sgtitle('Rotor angle response: 2nd order, non-uniform damping, input1 ');
+sgt = sgtitle('Rotor angle response: 2nd order, uniform damping, input2 ');
 sgt.FontSize = 32;
 set(fig2,'Position',[10 200 1500 400])
+
+if save_switch == 1
+    filename = '2nd_unif_angle';
+    savefig(fig2,filename,'compact');
+    saveas(fig2,filename,'epsc');
+    saveas(fig2,filename,'png');
+    movefile(strcat(filename,'.fig'),'plot')
+    movefile(strcat(filename,'.eps'),'plot')
+    movefile(strcat(filename,'.png'),'plot')
+end
 
 % Line flow
 fig3 = figure('DefaultAxesFontSize',18);
@@ -141,20 +205,36 @@ for i  = 1 : n_line
     subplot(3,3,i)
     flow_resp_temp = - (flow_resp(plot_idx,i)-flow_resp(plot_idx(1),i));
     flow_resp_temp = flow_resp_temp ./ 73;
-    plot(t_psat,flow_impz1(:,i)-flow_impz1(1,i),'-.',T2,flow_resp_temp,'-','LineWidth',2);
+    temp1 = (flow_impz1(:,i)-flow_impz1(1,i));
+    temp2 = flow_impz_fault(3:end,i) - flow_impz_fault(3,i);
+    plot(t_psat, temp1./max(abs(temp1)),'-.',...
+         t_psat(3:end),temp2./max(abs(temp2)),':',...
+         T2,flow_resp_temp./max(abs(flow_resp_temp)),'-','LineWidth',2);
     xlabel('Time [s]');
-    ylabel('Power dev. [MW]');
+%     ylabel('Power dev. [MW]');
     xlim([0 t_range]);
     title(strcat('line ',line_idx(i)));
     if i == 1
-        legend('model based','data driven','Location','best');
+%         legend('model based','data driven','Location','best');
+        legend('model based(mech.)','model based(load)','data driven','Location','best');
     end
 %     title('Input: \omega_2')
     grid on
 end
-sgt = sgtitle('Line response: 2nd order, non-uniform damping, input1');
+sgt = sgtitle('Line response: 2nd order, non-uniform damping, input2');
 sgt.FontSize = 32;
-set(fig3,'Position',[10 500 1500 1200])
+set(fig3,'Position',[10 100 1500 1200])
+
+
+if save_switch == 1
+    filename = '2nd_unif_line_pow';
+    savefig(fig3,filename,'compact');
+    saveas(fig3,filename,'epsc');
+    saveas(fig3,filename,'png');
+    movefile(strcat(filename,'.fig'),'plot')
+    movefile(strcat(filename,'.eps'),'plot')
+    movefile(strcat(filename,'.png'),'plot')
+end
     
 end
 

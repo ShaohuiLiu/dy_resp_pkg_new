@@ -8,19 +8,15 @@
 % Date: Jun. 23th, 2020
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function ang_resp = angle_response(ang_data,n_gen,dt)
+function ang_resp = angle_response6(ang_data,n_gen,dt)
 
 ang_resp = cell(n_gen,1);
+n = size(ang_data,1);
 
 % filter the ambient data using bandpass filter
 for i = 1 : n_gen
-    ang_data(:,i) = bandpass(ang_data(:,i),[0.01 200],round(1/dt)); % round(1/dt)
-%     ang_data(:,i) = bandpass(ang_data(:,i),[0.001 200],round(1/dt)); % round(1/dt)
+    ang_data(:,i) = bandpass(ang_data(:,i),[0.001 200],round(1/dt)); % round(1/dt)
 end
-
-% ang_data = ang_data(1000:20000,:);
-
-n = size(ang_data,1);
 
 for i = 1 : n_gen
     resp = zeros(n,n_gen);

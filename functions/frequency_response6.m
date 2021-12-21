@@ -8,14 +8,14 @@
 % Date: Jun. 23th, 2020
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function freq_resp = frequency_response(freq_data,n_gen,dt)
+function freq_resp = frequency_response6(freq_data,n_gen,dt)
 
 freq_resp = cell(n_gen,1);
 n = size(freq_data,1);
 
 % filter the ambient data using bandpass filter
 for i = 1 : n_gen
-    freq_data(:,i) = bandpass(freq_data(:,i),[0.01 50],round(1/dt)); % 100
+    freq_data(:,i) = bandpass(freq_data(:,i),[0.01 200],round(1/dt)); % 100
 end
 
 for i = 1 : n_gen
