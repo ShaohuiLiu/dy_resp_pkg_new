@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Dynamic Response Estimation 
+% Dynamic Response Estimation (perturbation on load)
 
 % This is the main file of the dynamic response estimation algorithm. The
 % algorithm is aimed for inferring the impulse response of frequency, angle
@@ -26,27 +26,8 @@ clear all;clc
 % load ambient data file
 % load data/TD_2nd_unif_data_power_new.mat
 % load data/pkg_td/psat_td_data_2nd_unif.mat
-% load data/psat_td_data_2nd_unif_0726.mat % orinigal
-% load data/psat_td_data_2nd_unif_load.mat % 11/15
-% load ../test_cases_1115/td_2nd_unif_load_1116.mat % pert on original 3 loads
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_1117.mat % pert on 3 new loads near generator
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_scaled1_1117.mat % (not good) pert on 3 new loads near generator, Var seacled by [2,1,3]
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_1121.mat % pert on 3 new loads near generato, reduce q
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long_1121.mat % pert on 3 new loads near generator, reduce q, longer to reduce correlation
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long1_1121.mat % pert on 3 new loads near generator, reduce q, longer to reduce correlation
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_long2_1122.mat % pert on 3 new loads near generator, fix voltage and negative load
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation_1125.mat % pert on 3 new loads near generator, participation factor (inverse)
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation3_1125.mat % pert on 3 new loads near generator, participation factor 1:1:1
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation4_1127.mat % pert on 3 new loads near generator, participation factor 1:0:10
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation5_1127.mat % pert on 3 new loads near generator, participation factor 0:0:11
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation6_1127.mat %
-% pert on 3 new loads near generator, participation factor 1;12;5 peak
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_participation7_1127.mat % 
-% pert on 3 new loads near generator, participation factor 1;9;4, immediate response
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_lowq_scaled_1121.mat % 2:1:3
-% load ../test_cases_1115/td_2nd_unif_load_on_gen_scaled_1117.mat % (freq not good, angle good) pert on 3 new loads near generator, Var seacled by damping
-load ../test_cases_1115/td_2nd_unif_load_on_gen_participation20_1218_genload.mat
-% load data/pkg_td/psat_td_data_2nd_unif_load.mat
+% load data/psat_td_data_2nd_unif_0726.mat % orinigal on pm
+load data/psat_td_data_2nd_unif_load.mat % 11/15
 % load data/psat_td_data_2nd_unif_load1.mat
 addpath('functions');
 % load data/pkg_td/psat_td_data_2nd_nonunif.mat

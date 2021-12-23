@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Dynamic Response Estimation 
+% Dynamic Response Estimation (perturbation on mechanical power)
 
 % This is the main file of the dynamic response estimation algorithm. The
 % algorithm is aimed for inferring the impulse response of frequency, angle
